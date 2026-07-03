@@ -1,11 +1,12 @@
+const PRODUCTION_API = "https://str-api-m4ju.onrender.com/api";
+
 function getApiBase() {
   if (typeof window !== "undefined") {
     if (window.__STR_CONFIG__?.apiUrl) {
       return window.__STR_CONFIG__.apiUrl.replace(/\/$/, "");
     }
-    // Cloudflare Pages proxies /api/* to Render (see public/_redirects)
     if (window.location.hostname.endsWith(".pages.dev")) {
-      return "/api";
+      return PRODUCTION_API;
     }
   }
   if (import.meta.env.VITE_API_URL) {
