@@ -36,6 +36,7 @@ async function request(path, options = {}) {
       `Cannot reach the API at ${api}. The backend may be waking up (free tier takes ~50s). Try again.`
     );
   }
+  if (res.status === 204) return null;
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
     throw new Error(formatError(err.detail));
@@ -54,4 +55,11 @@ export const api = {
   createMatch: (data) =>
     request("/matches", { method: "POST", body: JSON.stringify(data) }),
   health: () => request("/health"),
+  updatePlayer: (id, data) =>
+    request(`/players/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deletePlayer: (id) => request(`/players/${id}`, { method: "DELETE" }),
+  getMatch: (id) => request(`/matches/${id}`),
+  updateMatch: (id, data) =>
+    request(`/matches/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteMatch: (id) => request(`/matches/${id}`, { method: "DELETE" }),
 };

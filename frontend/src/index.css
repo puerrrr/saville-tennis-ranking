@@ -352,9 +352,40 @@ tr:hover td {
   text-align: center;
 }
 
+.loading {
   text-align: center;
   padding: 3rem;
   color: var(--text-muted);
+}
+
+.btn-sm {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.danger-btn {
+  color: var(--danger);
+}
+
+.danger-btn:hover {
+  background: rgba(224, 92, 92, 0.15);
+}
+
+.actions-cell {
+  display: flex;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.match-edit-form {
+  padding: 0.75rem 0;
+}
+
+.match-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .page-title {

@@ -9,10 +9,17 @@ class PlayerCreate(BaseModel):
     initial_rating: float = Field(default=5.0, ge=1.0, le=16.5)
 
 
+class PlayerUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=120)
+    email: str | None = None
+    initial_rating: float | None = Field(default=None, ge=1.0, le=16.5)
+
+
 class PlayerOut(BaseModel):
     id: int
     name: str
     email: str | None
+    initial_rating: float
     str_rating: float
     is_projected: bool
     match_count: int
@@ -48,6 +55,24 @@ class MatchCreate(BaseModel):
     def different_players(cls, value: int, info) -> int:
         if info.data.get("player1_id") == value:
             raise ValueError("player1 and player2 must be different")
+        return value
+
+
+class MatchUpdate(BaseModel):
+    player1_games: int | None = Field(default=None, ge=0)
+    player2_games: int | None = Field(default=None, ge=0)
+    match_format: str | None = None
+    played_at: datetime | None = None
+    notes: str | None = None
+
+    @field_validator("match_format")
+    @classmethod
+    def validate_format(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        allowed = {"single_set", "pro_set", "best_of_3", "best_of_5"}
+        if value not in allowed:
+            raise ValueError(f"match_format must be one of {sorted(allowed)}")
         return value
 
 
