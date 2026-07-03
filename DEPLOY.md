@@ -138,11 +138,24 @@ Remember to add the custom domain to `ALLOWED_ORIGINS` on Render.
 
 | Problem | Fix |
 |---------|-----|
-| Site loads but no data | Check `VITE_API_URL` on Cloudflare — must end with `/api` |
+| **"Failed to fetch" / cannot reach API** | Backend not deployed on Render, or wrong URL in `frontend/public/config.js` |
+| Site loads but no data | Check `config.js` or `VITE_API_URL` — must end with `/api` |
 | CORS error in browser console | Add your Pages URL to `ALLOWED_ORIGINS` on Render |
 | First load very slow | Normal on Render free tier — backend was sleeping |
 | Database connection failed | Use Neon **pooled** connection string; ensure `?sslmode=require` |
 | 404 on `/players/1` refresh | `_redirects` in `frontend/public/` handles SPA routing |
+
+### Verify the backend is live
+
+Open this in your browser (replace with your Render URL):
+
+```
+https://str-api.onrender.com/api/health
+```
+
+You should see: `{"status":"ok","system":"Saville Tennis Ranking"}`
+
+If you see **Not Found** or a timeout, the Render backend is not deployed yet — complete step 3 below.
 
 ---
 

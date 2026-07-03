@@ -1,4 +1,18 @@
-const API = import.meta.env.VITE_API_URL || "/api";
+function getApiBase() {
+  if (typeof window !== "undefined") {
+    if (window.__STR_CONFIG__?.apiUrl) {
+      return window.__STR_CONFIG__.apiUrl.replace(/\/$/, "");
+    }
+    // Cloudflare Pages proxies /api/* to Render (see public/_redirects)
+    if (window.location.hostname.endsWith(".pages.dev")) {
+      return "/api";
+    }
+  }
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/$/, "");
+  }
+  return "/api";
+}
 
 function formatError(detail) {
   if (typeof detail === "string") return detail;
@@ -9,10 +23,18 @@ function formatError(detail) {
 }
 
 async function request(path, options = {}) {
-  const res = await fetch(`${API}${path}`, {
-    headers: { "Content-Type": "application/json", ...options.headers },
-    ...options,
-  });
+  const api = getApiBase();
+  let res;
+  try {
+    res = await fetch(`${api}${path}`, {
+      headers: { "Content-Type": "application/json", ...options.headers },
+      ...options,
+    });
+  } catch {
+    throw new Error(
+      `Cannot reach the API at ${api}. The backend may be waking up (free tier takes ~50s). Try again.`
+    );
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
     throw new Error(formatError(err.detail));
@@ -21,6 +43,7 @@ async function request(path, options = {}) {
 }
 
 export const api = {
+  getApiBase,
   getPlayers: () => request("/players"),
   getPlayer: (id) => request(`/players/${id}`),
   createPlayer: (data) =>
